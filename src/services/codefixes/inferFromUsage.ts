@@ -1045,7 +1045,7 @@ function inferTypeFromReferences(program: Program, references: readonly Identifi
         const members = mapEntries(props, (name, types) => {
             const isOptional = types.length < anons.length ? SymbolFlags.Optional : 0;
             const s = checker.createSymbol(SymbolFlags.Property | isOptional, name as __String);
-            s.type = checker.getUnionType(types);
+            s.links.type = checker.getUnionType(types);
             return [name, s];
         });
         const indexInfos = [];
@@ -1101,7 +1101,7 @@ function inferTypeFromReferences(program: Program, references: readonly Identifi
         if (usage.properties) {
             usage.properties.forEach((u, name) => {
                 const symbol = checker.createSymbol(SymbolFlags.Property, name);
-                symbol.type = combineFromUsage(u);
+                symbol.links.type = combineFromUsage(u);
                 members.set(name, symbol);
             });
         }
@@ -1221,7 +1221,7 @@ function inferTypeFromReferences(program: Program, references: readonly Identifi
         const length = Math.max(...calls.map(c => c.argumentTypes.length));
         for (let i = 0; i < length; i++) {
             const symbol = checker.createSymbol(SymbolFlags.FunctionScopedVariable, escapeLeadingUnderscores(`arg${i}`));
-            symbol.type = combineTypes(calls.map(call => call.argumentTypes[i] || checker.getUndefinedType()));
+            symbol.links.type = combineTypes(calls.map(call => call.argumentTypes[i] || checker.getUndefinedType()));
             if (calls.some(call => call.argumentTypes[i] === undefined)) {
                 symbol.flags |= SymbolFlags.Optional;
             }

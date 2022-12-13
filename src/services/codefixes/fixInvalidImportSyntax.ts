@@ -107,11 +107,11 @@ function getActionsForInvalidImportLocation(context: CodeFixContext): CodeFixAct
 
 function getImportCodeFixesForExpression(context: CodeFixContext, expr: Node): CodeFixAction[] | undefined {
     const type = context.program.getTypeChecker().getTypeAtLocation(expr);
-    if (!(type.symbol && (type.symbol as TransientSymbol).originatingImport)) {
+    if (!(type.symbol && (type.symbol as TransientSymbol).links.originatingImport)) {
         return [];
     }
     const fixes: CodeFixAction[] = [];
-    const relatedImport = (type.symbol as TransientSymbol).originatingImport!; // TODO: GH#18217
+    const relatedImport = (type.symbol as TransientSymbol).links.originatingImport!; // TODO: GH#18217
     if (!isImportCall(relatedImport)) {
         addRange(fixes, getCodeFixesForImportDeclaration(context, relatedImport));
     }
